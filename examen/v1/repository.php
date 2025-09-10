@@ -3,15 +3,12 @@
 require_once('GenPassword.php');
 
 class Repository{
-    public $length = 12;
-    public $opts = [];
-
 
     public function getPassword(){  
-        $this->length = $length;
-        $this->$lower = true;
-        $this->$upper = true;
-        $this->$digit = true;
+        $length = 16;
+        $lower = true;
+        $upper = true;
+        $digit = true;
         $opts = [
             'lower' => $lower,
             'upper' => $upper,
