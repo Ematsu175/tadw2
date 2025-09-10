@@ -3,7 +3,7 @@ require_once('repository.php');
 
 header('Content-Type: application/json');
 
-$repo = Repository();
-$pass = $repo->getPass();
+$repo =new Repository();
+$pass = $repo->getPassword();
 
 echo json_encode($pass);
