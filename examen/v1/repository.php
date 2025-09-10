@@ -17,4 +17,19 @@ class Repository{
         $genPass = generate_password($length, $opts);
         return $genPass;
     }
+
+    public function getAll($length, $opts){  
+        $this->$length = $length;
+        $lower = true;
+        $upper = true;
+        $digit = true;
+        $opts = [
+            'lower' => $lower,
+            'upper' => $upper,
+            'digit' => $digit,
+        ];
+        $this->$opts = $opts;
+        $genPass = generate_password($length, $opts);
+        return $genPass;
+    }
 }
