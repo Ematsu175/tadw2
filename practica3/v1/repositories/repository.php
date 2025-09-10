@@ -3,21 +3,47 @@ class BrandRepository {
     private mysqli $db;
 
     public function __construct() {
-        $this->db = Database::getInstance(); // usa Singleton
+        $this->db = Database::getInstance();
     }
 
-    public function upsert(int $id, string $name, string $type = null): bool {
-    $sql = "INSERT INTO marca (codigo, nome) VALUES (?,?)
-            ON DUPLICATE KEY UPDATE nome = VALUES(nome)";
-    $stmt = $this->db->prepare($sql);
-    $stmt->bind_param("is", $id, $name);
-    return $stmt->execute();
-}
+    // Crear nueva marca
+    public function insert(int $id, string $name): bool {
+        $sql = "INSERT INTO marca (codigo, nome) VALUES (?, ?)";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("is", $id, $name);
+        return $stmt->execute();
+    }
 
-    public function listByType(string $type): array {
-        $stmt = $this->db->prepare("SELECT * FROM marca WHERE type=? ORDER BY nome");
-        $stmt->bind_param("s", $type);
+    // Actualizar marca existente
+    public function update(int $id, string $name): bool {
+        $sql = "UPDATE marca SET nome = ? WHERE codigo = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("si", $name, $id);
+        return $stmt->execute();
+    }
+
+    // Eliminar marca
+    public function delete(int $id): bool {
+        $sql = "DELETE FROM marca WHERE codigo = ?";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $id);
+        return $stmt->execute();
+    }
+
+    // Obtener todas las marcas
+    public function listAll(): array {
+        $sql = "SELECT codigo, nome FROM marca ORDER BY nome";
+        $result = $this->db->query($sql);
+        return $result->fetch_all(MYSQLI_ASSOC);
+    }
+
+    // Verificar si existe
+    public function exists(int $id): bool {
+        $sql = "SELECT 1 FROM marca WHERE codigo = ? LIMIT 1";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bind_param("i", $id);
         $stmt->execute();
-        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+        $result = $stmt->get_result();
+        return $result->num_rows > 0;
     }
 }
