@@ -18,7 +18,8 @@ if (!empty($errors)) {
 
 // Crear actor
 $repo = new Repository();
-$repo->getAll($data["lenght"], $data["opts"]);
+//$repo->getAll($data["lenght"], $data["opts"]);
+$repo->getAll($data["lenght"], $data["opts"], $data["lower"], $data["upper"], $data["digit"]);
 
 echo json_encode(["message" => "Actor creado exitosamente"]);
 

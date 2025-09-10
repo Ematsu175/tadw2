@@ -18,15 +18,12 @@ class Repository{
         return $genPass;
     }
 
-    public function getAll($length, $opts){  
+    public function getAll($length, $opts, $lower, $upper, $digit){  
         $this->$length = $length;
-        $lower = true;
-        $upper = true;
-        $digit = true;
         $opts = [
-            'lower' => $lower,
-            'upper' => $upper,
-            'digit' => $digit,
+            'lower' => $this->$lower = $lower,
+            'upper' => $this->$upper = $upper,
+            'digit' => $this->$digit = $digit,
         ];
         $this->$opts = $opts;
         $genPass = generate_password($length, $opts);
