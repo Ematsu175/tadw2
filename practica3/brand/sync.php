@@ -7,29 +7,46 @@ require_once __DIR__ . '/../v1/services/service.php';
 require_once __DIR__ . '/../v1/repositories/repository.php';
 require_once __DIR__ . '/../v1/validators/validator.php';
 
-$type = "carros";  // fijo a carros
+$type = "carros"; // fijo a carros
 
 $service = new FipeService();
-$data = $service->fetchBrands($type);
+$result  = $service->fetchBrands($type);
 
-if (empty($data)) {
-    echo json_encode(["error" => "No se recibieron datos de FIPE", "url" => FIPE_BASE . "/$type/marcas"]);
+if ($result['error']) {
+    http_response_code(500);
+    echo json_encode([
+        "error" => $result['error'],
+        "url"   => FIPE_BASE . "/$type/marcas"
+    ], JSON_UNESCAPED_UNICODE);
     exit;
 }
+
+$data = $result['data'];
 
 $repo = new BrandRepository();
 $validator = new BrandValidator();
 
 $inserted = 0;
+$skipped  = 0;
+$errors   = [];
+
 foreach ($data as $row) {
     [$ok, $msg] = $validator->validate($row);
     if ($ok) {
-        $id = (int)$row['codigo'];
+        $id   = (int)$row['codigo'];
         $name = $row['nome'];
-        if ($repo->upsert($id, $name)) {
+        if ($repo->insert($id, $name)) {
             $inserted++;
         }
+    } else {
+        $skipped++;
+        $errors[] = $msg;
     }
 }
 
-echo json_encode(["status" => "OK", "inserted" => $inserted]);
+echo json_encode([
+    "status"   => "OK",
+    "inserted" => $inserted,
+    "skipped"  => $skipped,
+    "errors"   => $errors
+], JSON_UNESCAPED_UNICODE);
