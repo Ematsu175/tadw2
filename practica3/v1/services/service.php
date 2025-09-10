@@ -7,6 +7,7 @@ class FipeService {
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_HTTPHEADER => ["Accept: application/json"]
         ]);
+        echo "URL: $url\n";
         $resp = curl_exec($ch);
         curl_close($ch);
 
